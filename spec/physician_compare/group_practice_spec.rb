@@ -2,10 +2,31 @@ require 'spec_helper'
 
 describe PhysicianCompare::GroupPractice do
 
-  let (:physician_params) { CSV.open('spec/data/test_data.csv', headers:true).first.to_hash }
-  let(:group_practice_params) {
-    physician_params.select { |key,value| PhysicianCompare::GROUP_PRACTICE_KEYS.include? key }
-  }
+  let(:group_practice_params) {{
+    "org_pac_id" => "4789850256",
+    "num_org_mem" => "1",
+    "ind_enrl_id" => "I20050418000159",
+    "npi" => "1184828550",
+    "gndr" => "F",
+    "frst_nm" => "DONNA",
+    "lst_nm" => "GILCHRIST",
+    "cty" => "NORTH BRUNSWICK",
+    "grd_yr" => "1998",
+    "st" => "NJ",
+    "med_sch" => "OTHER",
+    "zip" => "089022285",
+    "assgn" => "Y",
+    "ehr" => "N",
+    "cred" => "CSW",
+    "org_lgl_nm" => "INTEGRATED THERAPEUTIC SERVICES",
+    "pri_spec" => "CLINICAL SOCIAL WORKER",
+    "erx" => "N",
+    "adr_ln_1" => "985 PATTON ST",
+    "adr_ln_2" => "Suite 200",
+    "pqrs" => "N",
+    "ind_pac_id" => "5890732267",
+    "ln_2_sprs" => "N"
+  }}
 
   let(:group_practice) { PhysicianCompare::GroupPractice.new(group_practice_params) }
 

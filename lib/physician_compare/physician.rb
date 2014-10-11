@@ -3,22 +3,20 @@ module PhysicianCompare
 
     def initialize(params)
       @data = params
-
-      validate_data
     end
 
-    def accepts_medicare_as_full_payment
-      @data['Professional accepts Medicare Assignment'] == 'Y' ? true : false
+    def accepts_medicare_as_full_payment?
+      @data['assgn'] == 'Y' ? true : false
     end
 
     def affiliated_hospitals
       hospitals = []
 
       (1..5).each do |number|
-        unless @data["Claims based hospital affiliation CCN #{number}"].nil?
+        unless @data["hosp_afl_#{number}"].nil?
           hospital_params = {
-              'CCN' => @data["Claims based hospital affiliation CCN #{number}"],
-              'legal_business_name' => @data["Claims based hospital affiliation LBN #{number}"]
+              'CCN' => @data["hosp_afl_#{number}"],
+              'legal_business_name' => @data["hosp_afl_lbn_#{number}"]
           }
 
           hospitals.push PhysicianCompare::Hospital.new hospital_params
@@ -29,62 +27,62 @@ module PhysicianCompare
     end
 
     def ehr_participant?
-      @data['Participating in EHR'] == 'Y' ? true : false
+      @data['ehr'] == 'Y' ? true : false
     end
 
     def erx_participant?
-      @data['Participating in eRx'] == 'Y' ? true : false
+      @data['erx'] == 'Y' ? true : false
     end
 
     def first_name
-      @data['First Name']
+      @data['frst_nm']
     end
 
     def gender
-      @data['Gender']
+      @data['gndr']
     end
 
     def graduation_year
-      @data['Graduation year'].to_i
+      @data['grd_yr'].to_i
     end
 
     def group_practice
       if has_group_practice?
-        group_practice_params = @data.select { |key, value| GROUP_PRACTICE_KEYS.include? key }
+        group_practice_params = @data.select { |key, value| PhysicianCompare::GroupPractice::API_KEYS.include? key }
         PhysicianCompare::GroupPractice.new(group_practice_params)
       end
     end
 
     def has_group_practice?
-      !!@data['Organization legal name']
+      !!@data['org_lgl_nm']
     end
 
     def last_name
-      @data['Last Name']
+      @data['lst_nm']
     end
 
     def medical_credential
-      @data['Credential']
+      @data['cred']
     end
 
     def medical_school
-      @data['Medical school name']
+      @data['med_sch']
     end
 
     def middle_name
-      @data['Middle Name']
+      @data['mid_nm']
     end
 
     def name_suffix
-      @data['Suffix']
+      @data['suff']
     end
 
     def npi
-      @data['NPI']
+      @data['npi']
     end
 
     def pac_id
-      @data['PAC ID']
+      @data['ind_pac_id']
     end
 
     def pqrs_participant?
@@ -92,15 +90,15 @@ module PhysicianCompare
     end
 
     def primary_specialty
-      @data['Primary specialty']
+      @data['pri_spec']
     end
 
     def professional_enrollment_id
-      @data['Professional Enrollment ID']
+      @data['ind_enrl_id']
     end
 
     def secondary_specialties
-      specialty_fields = ['Secondary specialty 1','Secondary specialty 2','Secondary specialty 3','Secondary specialty 4']
+      specialty_fields = ['sec_spec_1','sec_spec_2','sec_spec_3','sec_spec_4']
 
       specialties = []
 
@@ -116,12 +114,6 @@ module PhysicianCompare
     def group_practice_params
       @data.select do |key, value|
         PhysicianCompare::GROUP_PRACTICE_KEYS.include? key
-      end
-    end
-
-    def validate_data
-      unless @data.keys == EXPECTED_HEADERS
-        raise 'Invalid params: keys do not match expected.'
       end
     end
   end

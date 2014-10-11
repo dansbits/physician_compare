@@ -2,28 +2,43 @@ require 'spec_helper'
 
 describe PhysicianCompare::Physician do
 
-  let(:params) { CSV.open('spec/data/test_data.csv', headers:true).first.to_hash }
-  let(:physician) { PhysicianCompare::Physician.new(params) }
+  let(:physician_params) {{
+      "org_pac_id" => "4789850256",
+      "num_org_mem" => "1",
+      "ind_enrl_id" => "I20050418000159",
+      "npi" => "1184828550",
+      "gndr" => "F",
+      "frst_nm" => "DONNA",
+      "lst_nm" => "GILCHRIST",
+      "mid_nm" => "F",
+      "suff" => "III",
+      "cty" => "NORTH BRUNSWICK",
+      "grd_yr" => "1998",
+      "hosp_afl_1" => "050625",
+      "hosp_afl_lbn_1" => "CEDARS-SINAI MEDICAL CENTER",
+      "hosp_afl_2" => "050262",
+      "hosp_afl_lbn_2" => "REGENTS UNIV OF CALIF OF LOS ANGELES",
+      "st" => "NJ",
+      "med_sch" => "OTHER",
+      "zip" => "089022285",
+      "assgn" => "Y",
+      "ehr" => "N",
+      "cred" => "CSW",
+      "org_lgl_nm" => "INTEGRATED THERAPEUTIC SERVICES",
+      "pri_spec" => "CLINICAL SOCIAL WORKER",
+      "sec_spec_1" => "NURSING",
+      "sec_spec_2" => "MASSAGE",
+      "sec_spec_3" => "INFORMATICS",
+      "sec_spec_4" => "ONCOLOGY",
+      "erx" => "N",
+      "adr_ln_1" => "985 PATTON ST",
+      "adr_ln_2" => "Suite 200",
+      "pqrs" => "N",
+      "ind_pac_id" => "5890732267",
+      "ln_2_sprs" => "N"
+  }}
 
-  describe '#initialize' do
-
-    subject { PhysicianCompare::Physician.new(params) }
-
-    context 'when the params do not contain the proper keys' do
-      let(:params) { { foo: 'bad', bar: 'params' } }
-
-      it 'raises an error' do
-        expect{subject}.to raise_error 'Invalid params: keys do not match expected.'
-      end
-    end
-
-    context 'when the params match the proper keys' do
-
-      it 'does not raise an error' do
-        expect{subject}.to_not raise_error
-      end
-    end
-  end
+  let(:physician) { PhysicianCompare::Physician.new(physician_params) }
 
   describe '#npi' do
     subject { physician.npi }
@@ -58,7 +73,7 @@ describe PhysicianCompare::Physician do
   describe '#middle_name' do
     subject { physician.middle_name }
 
-    it { expect(subject).to eq 'M' }
+    it { expect(subject).to eq 'F' }
   end
 
   describe '#name_suffix' do
@@ -111,7 +126,7 @@ describe PhysicianCompare::Physician do
     end
 
     context 'when the physician doesnt have a group practice' do
-      before { params['Organization legal name'] = nil }
+      before { physician_params['org_lgl_nm'] = nil }
 
       it { expect(subject).to eq false }
     end
@@ -134,7 +149,7 @@ describe PhysicianCompare::Physician do
 
     it { expect(subject.first).to be_a PhysicianCompare::Hospital }
     it { expect(subject.first.medicare_ccn).to eq '050625'}
-    it { expect(subject.last.legal_business_name).to eq 'Rando Med Center'}
+    it { expect(subject.last.legal_business_name).to eq 'REGENTS UNIV OF CALIF OF LOS ANGELES'}
   end
 
   describe '#accepts_medicare_as_full_payment' do
