@@ -9,7 +9,6 @@ module PhysicianCompare
       uri = url(params)
       JSON.parse(Net::HTTP.get(uri))
     end
-
     private
 
     def url(params)

@@ -51,7 +51,7 @@ describe PhysicianCompare::Api do
     end
 
     context 'with some params' do
-      let(:expected_uri) { URI('http://data.medicare.gov/resource/s63f-csi6.json&%24limit=100') }
+      let(:expected_uri) { URI('http://data.medicare.gov/resource/s63f-csi6.json?%24limit=100') }
 
       subject { api.fetch_physicians({ '$limit' => 100 }) }
 

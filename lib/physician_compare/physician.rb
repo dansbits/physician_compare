@@ -6,20 +6,20 @@ module PhysicianCompare
     end
 
     def accepts_medicare_as_full_payment?
-      @data['assgn'] == 'Y' ? true : false
+      @data['Professional accepts Medicare Assignment'] == 'Y' ? true : false
     end
 
     def affiliated_hospitals
       hospitals = []
 
       (1..5).each do |number|
-        unless @data["hosp_afl_#{number}"].nil?
+        unless @data["Claims based hospital affiliation CCN #{number}"].nil?
           hospital_params = {
-              'CCN' => @data["hosp_afl_#{number}"],
-              'legal_business_name' => @data["hosp_afl_lbn_#{number}"]
+              :ccn => @data["Claims based hospital affiliation CCN #{number}"],
+              :legal_business_name => @data["Claims based hospital affiliation LBN #{number}"]
           }
 
-          hospitals.push PhysicianCompare::Hospital.new hospital_params
+          hospitals.push hospital_params
         end
       end
 
@@ -27,78 +27,102 @@ module PhysicianCompare
     end
 
     def ehr_participant?
-      @data['ehr'] == 'Y' ? true : false
+      case @data['Participating in EHR']
+        when 'Y'
+          true
+        when 'N'
+          false
+      end
     end
 
     def erx_participant?
-      @data['erx'] == 'Y' ? true : false
+      case @data['Participating in eRx']
+        when 'Y'
+          true
+        when 'N'
+          false
+      end
     end
 
     def first_name
-      @data['frst_nm']
+      @data['First Name']
     end
 
     def gender
-      @data['gndr']
+      @data['Gender']
     end
 
     def graduation_year
-      @data['grd_yr'].to_i
+      @data['Graduation year'].to_i
     end
 
     def group_practice
       if has_group_practice?
-        group_practice_params = @data.select { |key, value| PhysicianCompare::GroupPractice::API_KEYS.include? key }
-        PhysicianCompare::GroupPractice.new(group_practice_params)
+        {
+          legal_name: @data['Organization legal name'],
+          pac_id: @data['Group Practice PAC ID'],
+          member_count: @data['Number of Group Practice member'],
+          address1: @data['Line 1 Street Address'],
+          address2: @data['Line 2 Street Address'],
+          address2_suppressed: @data['Marker of address line 2 suppression'] == 'Y' ? true : false,
+          city: @data['City'],
+          state: @data['State'],
+          zip_code: @data['Zip Code'],
+        }
       end
     end
 
     def has_group_practice?
-      !!@data['org_lgl_nm']
+      !!@data['Group Practice PAC ID']
     end
 
     def last_name
-      @data['lst_nm']
+      @data['Last Name']
     end
 
     def medical_credential
-      @data['cred']
+      @data['Credential']
     end
 
     def medical_school
-      @data['med_sch']
+      @data['Medical school name']
     end
 
     def middle_name
-      @data['mid_nm']
+      @data['Middle Name']
     end
 
     def name_suffix
-      @data['suff']
+      @data['Suffix']
     end
 
     def npi
-      @data['npi']
+      @data['NPI']
     end
 
     def pac_id
-      @data['ind_pac_id']
+      @data['PAC ID']
     end
 
     def pqrs_participant?
-      @data['Participating in PQRS'] == 'Y' ? true : false
+      case @data['Participating in PQRS']
+        when 'Y'
+          true
+        when 'N'
+          false
+      end
     end
 
     def primary_specialty
-      @data['pri_spec']
+      @data['Primary specialty']
     end
 
     def professional_enrollment_id
-      @data['ind_enrl_id']
+      @data['Professional Enrollment ID']
     end
 
     def secondary_specialties
-      specialty_fields = ['sec_spec_1','sec_spec_2','sec_spec_3','sec_spec_4']
+      specialty_fields = ['Secondary specialty 1','Secondary specialty 2','Secondary specialty 3','Secondary specialty 4']
 
       specialties = []
 
