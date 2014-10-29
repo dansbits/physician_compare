@@ -12,6 +12,36 @@ describe PhysicianCompare::Physician do
     it { expect(subject).to eq '1184828550' }
   end
 
+  describe '#address1' do
+    subject { physician.address1 }
+    it { expect(subject).to eq '985 PATTON ST' }
+  end
+
+  describe '#address2' do
+    subject { physician.address2 }
+    it { expect(subject).to eq 'Apt 2' }
+  end
+
+  describe '#address2_suppressed' do
+    subject { physician.address2_suppressed }
+    it { expect(subject).to eq false }
+  end
+
+  describe '#city' do
+    subject { physician.city }
+    it { expect(subject).to eq 'NORTH BRUNSWICK' }
+  end
+
+  describe '#state' do
+    subject { physician.state }
+    it { expect(subject).to eq 'NJ' }
+  end
+
+  describe '#zip_code' do
+    subject { physician.zip_code }
+    it { expect(subject).to eq '089022285' }
+  end
+
   describe '#pac_id' do
     subject { physician.pac_id }
 

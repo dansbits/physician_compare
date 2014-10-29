@@ -9,6 +9,18 @@ module PhysicianCompare
       @data['Professional accepts Medicare Assignment'] == 'Y' ? true : false
     end
 
+    def address1
+      @data['Line 1 Street Address']
+    end
+
+    def address2
+      @data['Line 2 Street Address']
+    end
+
+    def address2_suppressed
+      @data['Marker of address line 2 suppression'] == 'Y' ? true : false
+    end
+
     def affiliated_hospitals
       hospitals = []
 
@@ -24,6 +36,10 @@ module PhysicianCompare
       end
 
       hospitals
+    end
+
+    def city
+      @data['City']
     end
 
     def ehr_participant?
@@ -131,6 +147,14 @@ module PhysicianCompare
       end
 
       specialties
+    end
+
+    def state
+      @data['State']
+    end
+
+    def zip_code
+      @data['Zip Code']
     end
 
     private
